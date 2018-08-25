@@ -150,6 +150,8 @@ model = PoincareModel.load(test_model_path)
 
 # ### 3.1 Simple operations
 
+# 次のすべての操作は、双曲線空間内の2つのノード間の距離の概念にのみ基づいています。
+# 
 # All the following operations are based simply on the notion of distance between two nodes in hyperbolic space.
 
 # In[ ]:
@@ -201,6 +203,8 @@ print(PoincareKeyedVectors.vector_distance_batch(vector_1, vectors_multiple))
 
 # ### 3.2 Experimental operations
 
+# これらの演算は、ベクトルのノルムがその階層的位置を表すという概念に基づいています。 リーフノードは通常、最も高いノルムを持つ傾向があり、階層を上げると、ノルムは減少し、ルートノードは中心（または原点）に近くなります。
+# 
 # These operations are based on the notion that the norm of a vector represents its hierarchical position. Leaf nodes typically tend to have the highest norms, and as we move up the hierarchy, the norm decreases, with the root node being close to the center (or origin).
 
 # In[ ]:
@@ -241,8 +245,12 @@ model.kv.descendants('mammal.n.01')
 model.kv.ancestors('dog.n.01')
 
 
+# チェーンは対称ではないことに注意してください。最も近い子に再帰的に降下しながら、 `mammal`から始まり、` carnivore`の最も近い子は `dog`ですが、` dog`から最も近い親は`canine`.です。
+# 
 # Note that the chains are not symmetric - while descending to the closest child recursively, starting with `mammal`, the closest child of `carnivore` is `dog`, however, while ascending from `dog` to the closest parent, the closest parent to `dog` is `canine`. 
 
+# これは、ポアンカレ距離が（メトリック空間内の任意の距離のように）対称であるという事実にもかかわらずです。 非対称性は、ノード「Y」が、「X」より高いノルム（階層の下位）を有するすべてのノードのうちのノード「X」に最も近いノードであっても、ノード「Y」よりも低いノルム（階層内で高い）を有する全てのノードの中でノード「X」に最も近いノードはノード「Y」というわけでないということに立脚します。
+# 
 # This is despite the fact that Poincaré distance is symmetric (like any distance in a metric space). The asymmetry stems from the fact that even if node `Y` is the closest node to node `X` amongst all nodes with a higher norm (lower in the hierarchy) than `X`, node `X` may not be the closest node to node `Y` amongst all the nodes with a lower norm (higher in the hierarchy) than `Y`.
 
 # ## 4. Useful Links
