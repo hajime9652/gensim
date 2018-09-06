@@ -33,7 +33,7 @@
 #      - トピックコヒーレンスメトリクスの助けを借りてLSIとしてのLDA
 # 最初に、これらのトピックモデルを既存のデータに合わせて、それぞれを比較し、人間の解釈可能性の点でランク付けする方法を見ていきます。
 # 
-# すべてgensimで見ることができ、プラグアンドプレイの方法で簡単に使用できます。 Roederらによ[この](http://svn.aksw.org/papers/2015/WSDM_Topic_Evaluation/public.pdf)論文に基づいて、gensimで新たに追加されたトピックコヒーレンスメトリクスを使用してLDAモデルを調整し、結果として得られるトピックモデルは、既存のトピックモデルと比較されます。
+# すべてgensimで見ることができ、プラグアンドプレイの方法で簡単に使用できます。 Roederらによる[この](http://svn.aksw.org/papers/2015/WSDM_Topic_Evaluation/public.pdf)論文に基づいて、gensimで新たに追加されたトピックコヒーレンスメトリクスを使用してLDAモデルを調整し、結果として得られるトピックモデルは、既存のトピックモデルと比較されます。
 # 
 # In this tutorial we look at how different topic models can be easily created using [gensim](https://radimrehurek.com/gensim/).
 # Following are the dependencies for this tutorial:
