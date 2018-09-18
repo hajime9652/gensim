@@ -53,6 +53,7 @@
 
 # In[ ]:
 
+
 import os
 import re
 import operator
@@ -72,10 +73,11 @@ from gensim.corpora import Dictionary
 from pprint import pprint
 from smart_open import smart_open
 
-get_ipython().magic('matplotlib inline')
+get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # In[ ]:
+
 
 test_data_dir = '{}'.format(os.sep).join([gensim.__path__[0], 'test', 'test_data'])
 lee_train_file = test_data_dir + os.sep + 'lee_background.cor'
@@ -99,6 +101,7 @@ lee_train_file = test_data_dir + os.sep + 'lee_background.cor'
 
 # In[ ]:
 
+
 with smart_open(lee_train_file, 'rb') as f:
     for n, l in enumerate(f):
         if n < 5:
@@ -106,6 +109,7 @@ with smart_open(lee_train_file, 'rb') as f:
 
 
 # In[ ]:
+
 
 def build_texts(fname):
     """
@@ -126,10 +130,12 @@ def build_texts(fname):
 
 # In[ ]:
 
+
 train_texts = list(build_texts(lee_train_file))
 
 
 # In[ ]:
+
 
 len(train_texts)
 
@@ -150,15 +156,18 @@ len(train_texts)
 
 # In[ ]:
 
+
 bigram = gensim.models.Phrases(train_texts)  # for bigram collocation detection
 
 
 # In[ ]:
 
+
 bigram[['new', 'york', 'example']]
 
 
 # In[ ]:
+
 
 from gensim.utils import lemmatize
 from nltk.corpus import stopwords
@@ -166,10 +175,12 @@ from nltk.corpus import stopwords
 
 # In[ ]:
 
+
 stops = set(stopwords.words('english'))  # nltk stopwords list
 
 
 # In[ ]:
+
 
 def process_texts(texts):
     """
@@ -199,6 +210,7 @@ def process_texts(texts):
 
 # In[ ]:
 
+
 train_texts = process_texts(train_texts)
 train_texts[5:6]
 
@@ -208,6 +220,7 @@ train_texts[5:6]
 # Finalising our dictionary and corpus
 
 # In[ ]:
+
 
 dictionary = Dictionary(train_texts)
 corpus = [dictionary.doc2bow(text) for text in train_texts]
@@ -220,15 +233,18 @@ corpus = [dictionary.doc2bow(text) for text in train_texts]
 
 # In[ ]:
 
+
 lsimodel = LsiModel(corpus=corpus, num_topics=10, id2word=dictionary)
 
 
 # In[ ]:
 
+
 lsimodel.show_topics(num_topics=5)  # Showing only the top 5 topics
 
 
 # In[ ]:
+
 
 lsitopics = lsimodel.show_topics(formatted=False)
 
@@ -240,15 +256,18 @@ lsitopics = lsimodel.show_topics(formatted=False)
 
 # In[ ]:
 
+
 hdpmodel = HdpModel(corpus=corpus, id2word=dictionary)
 
 
 # In[ ]:
 
+
 hdpmodel.show_topics()
 
 
 # In[ ]:
+
 
 hdptopics = hdpmodel.show_topics(formatted=False)
 
@@ -260,6 +279,7 @@ hdptopics = hdpmodel.show_topics(formatted=False)
 
 # In[ ]:
 
+
 ldamodel = LdaModel(corpus=corpus, num_topics=10, id2word=dictionary)
 
 
@@ -269,20 +289,24 @@ ldamodel = LdaModel(corpus=corpus, num_topics=10, id2word=dictionary)
 
 # In[ ]:
 
+
 import pyLDAvis.gensim
 
 
 # In[ ]:
+
 
 pyLDAvis.enable_notebook()
 
 
 # In[ ]:
 
+
 pyLDAvis.gensim.prepare(ldamodel, corpus, dictionary)
 
 
 # In[ ]:
+
 
 ldatopics = ldamodel.show_topics(formatted=False)
 
@@ -296,6 +320,7 @@ ldatopics = ldamodel.show_topics(formatted=False)
 # [What is topic coherence?](https://rare-technologies.com/what-is-topic-coherence/)
 
 # In[ ]:
+
 
 def evaluate_graph(dictionary, corpus, texts, limit):
     """
@@ -333,15 +358,18 @@ def evaluate_graph(dictionary, corpus, texts, limit):
 
 # In[ ]:
 
+
 get_ipython().run_cell_magic('time', '', 'lmlist, c_v = evaluate_graph(dictionary=dictionary, corpus=corpus, texts=train_texts, limit=10)')
 
 
 # In[ ]:
 
+
 pyLDAvis.gensim.prepare(lmlist[2], corpus, dictionary)
 
 
 # In[ ]:
+
 
 lmtopics = lmlist[5].show_topics(formatted=False)
 
@@ -353,6 +381,7 @@ lmtopics = lmlist[5].show_topics(formatted=False)
 # One of the problem with LDA is that if we train it on a large number of topics, the topics get "lost" among the numbers. Let us see if we can dig out the best topics from the best LDA model we can produce. The function below can be used to control the quality of the LDA model we produce.
 
 # In[ ]:
+
 
 def ret_top_model():
     """
@@ -379,10 +408,12 @@ def ret_top_model():
 
 # In[ ]:
 
+
 lm, top_topics = ret_top_model()
 
 
 # In[ ]:
+
 
 print(top_topics[:5])
 
@@ -394,10 +425,12 @@ print(top_topics[:5])
 
 # In[ ]:
 
+
 pprint([lm.show_topic(topicid) for topicid, c_v in top_topics[:10]])
 
 
 # In[ ]:
+
 
 lda_lsi_topics = [[word for word, prob in lm.show_topic(topicid)] for topicid, c_v in top_topics]
 
@@ -409,6 +442,7 @@ lda_lsi_topics = [[word for word, prob in lm.show_topic(topicid)] for topicid, c
 
 # In[ ]:
 
+
 lsitopics = [[word for word, prob in topic] for topicid, topic in lsitopics]
 
 hdptopics = [[word for word, prob in topic] for topicid, topic in hdptopics]
@@ -419,6 +453,7 @@ lmtopics = [[word for word, prob in topic] for topicid, topic in lmtopics]
 
 
 # In[ ]:
+
 
 lsi_coherence = CoherenceModel(topics=lsitopics[:10], texts=train_texts, dictionary=dictionary, window_size=10).get_coherence()
 
@@ -432,6 +467,7 @@ lda_lsi_coherence = CoherenceModel(topics=lda_lsi_topics[:10], texts=train_texts
 
 
 # In[ ]:
+
 
 def evaluate_bar_graph(coherences, indices):
     """
@@ -450,6 +486,7 @@ def evaluate_bar_graph(coherences, indices):
 
 # In[ ]:
 
+
 evaluate_bar_graph([lsi_coherence, hdp_coherence, lda_coherence, lm_coherence, lda_lsi_coherence],
                    ['LSI', 'HDP', 'LDA', 'LDA_Mod', 'LDA_LSI'])
 
@@ -466,6 +503,7 @@ evaluate_bar_graph([lsi_coherence, hdp_coherence, lda_coherence, lm_coherence, l
 
 # In[ ]:
 
+
 from gensim.topic_coherence import (segmentation, probability_estimation,
                                     direct_confirmation_measure, indirect_confirmation_measure,
                                     aggregation)
@@ -475,10 +513,12 @@ from collections import namedtuple
 
 # In[ ]:
 
+
 make_pipeline = namedtuple('Coherence_Measure', 'seg, prob, conf, aggr')
 
 
 # In[ ]:
+
 
 measure = make_pipeline(segmentation.s_one_one,
                         probability_estimation.p_boolean_sliding_window,
@@ -492,6 +532,7 @@ measure = make_pipeline(segmentation.s_one_one,
 
 # In[ ]:
 
+
 topics = []
 for topic in lm.state.get_lambda():
     bestn = argsort(topic, topn=10, reverse=True)
@@ -502,6 +543,7 @@ topics.append(bestn)
 
 # In[ ]:
 
+
 # Perform segmentation
 segmented_topics = measure.seg(topics)
 
@@ -509,6 +551,7 @@ segmented_topics = measure.seg(topics)
 # __Step 2__: Probability estimation
 
 # In[ ]:
+
 
 # Since this is a window-based coherence measure we will perform window based prob estimation
 per_topic_postings, num_windows = measure.prob(texts=train_texts, segmented_topics=segmented_topics,
@@ -519,12 +562,14 @@ per_topic_postings, num_windows = measure.prob(texts=train_texts, segmented_topi
 
 # In[ ]:
 
+
 confirmed_measures = measure.conf(segmented_topics, per_topic_postings, num_windows, normalize=False)
 
 
 # __Step 4__: Aggregation
 
 # In[ ]:
+
 
 print(measure.aggr(confirmed_measures))
 

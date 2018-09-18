@@ -9,10 +9,12 @@
 
 # In[ ]:
 
+
 get_ipython().system("pip install plotly>=2.0.16 --ignore-installed# 2.0.16 need for support 'hovertext' argument from create_dendrogram function")
 
 
 # In[ ]:
+
 
 from gensim.models.ldamodel import LdaModel
 from gensim.corpora import Dictionary
@@ -29,6 +31,7 @@ import numpy as np
 # We'll use the [fake news dataset](https://www.kaggle.com/mrisdal/fake-news) from kaggle for this notebook. First step is to preprocess the data and train our topic model using LDA. You can refer to this [notebook](https://github.com/RaRe-Technologies/gensim/blob/develop/docs/notebooks/lda_training_tips.ipynb) also for tips and suggestions of pre-processing the text data, and how to train LDA model for getting good results.
 
 # In[ ]:
+
 
 df_fake = pd.read_csv('fake.csv')
 df_fake[['title', 'text', 'language']].head()
@@ -57,11 +60,13 @@ corpus_fake = [dictionary.doc2bow(text) for text in texts]
 
 # In[ ]:
 
+
 lda_fake = LdaModel(corpus=corpus_fake, id2word=dictionary, num_topics=35, chunksize=1500, iterations=200, alpha='auto')
 lda_fake.save('lda_35')
 
 
 # In[ ]:
+
 
 lda_fake = LdaModel.load('lda_35')
 
@@ -72,6 +77,7 @@ lda_fake = LdaModel.load('lda_35')
 # Firstly, a distance matrix is calculated to store distance between every topic pair. The nodes of the network graph will represent topics and the edges between them will be created based on the distance between two connecting nodes/topics.
 
 # In[ ]:
+
 
 # get topic distributions
 topic_dist = lda_fake.state.get_lambda()
@@ -86,6 +92,7 @@ topic_terms = [{w for (w, _) in lda_fake.show_topic(topic, topn=num_words)} for 
 # To draw the edges, we can use different types of distance metrics available in gensim for calculating the distance between every topic pair. Next, we'd have to define a threshold of distance value such that the topic-pairs with distance above that does not get connected. 
 
 # In[ ]:
+
 
 from scipy.spatial.distance import pdist, squareform
 from gensim.matutils import jensen_shannon
@@ -113,6 +120,7 @@ edges = [e for e in edges if e[2]['weight'] < k]
 
 # In[ ]:
 
+
 import plotly.offline as py
 from plotly.graph_objs import *
 import plotly.figure_factory as ff
@@ -128,6 +136,7 @@ graph_pos = nx.spring_layout(G)
 
 
 # In[ ]:
+
 
 # initialize traces for drawing nodes and edges 
 node_trace = Scatter(
@@ -197,6 +206,7 @@ for node, adjacencies in enumerate(G.adjacency()):
 
 # In[ ]:
 
+
 fig = Figure(data=Data([edge_trace, node_trace]),
              layout=Layout(showlegend=False,
                 hovermode='closest',
@@ -211,6 +221,7 @@ py.iplot(fig)
 # Or we can also get an idea of threshold from the dendrogram (with ‘single’ linkage function). You can refer to [this notebook](http://nbviewer.jupyter.org/github/parulsethi/gensim/blob/b9e7ab54dde98438b0e4f766ee764b81af704367/docs/notebooks/Topic_dendrogram.ipynb) for more details on topic dendrogram visualization. The y-values in the dendrogram represent the metric distances and if we choose a certain y-value then only those topics which are clustered below it would be connected. So let's plot the dendrogram now to see the sequential clustering process with increasing distance values.
 
 # In[ ]:
+
 
 from gensim.matutils import jensen_shannon
 import scipy as scp

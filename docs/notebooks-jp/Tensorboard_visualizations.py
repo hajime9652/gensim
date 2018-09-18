@@ -16,6 +16,7 @@
 
 # In[ ]:
 
+
 import gensim
 import pandas as pd
 import smart_open
@@ -49,12 +50,14 @@ dataframe
 
 # In[ ]:
 
+
 def read_corpus(documents):
     for i, plot in enumerate(documents):
         yield gensim.models.doc2vec.TaggedDocument(gensim.utils.simple_preprocess(plot, max_len=30), [i])
 
 
 # In[ ]:
+
 
 train_corpus = list(read_corpus(dataframe.Plots))
 
@@ -64,6 +67,7 @@ train_corpus = list(read_corpus(dataframe.Plots))
 # Let's take a look at the training corpus.
 
 # In[ ]:
+
 
 train_corpus[:2]
 
@@ -76,6 +80,7 @@ train_corpus[:2]
 
 # In[ ]:
 
+
 model = gensim.models.doc2vec.Doc2Vec(size=50, min_count=2, iter=55)
 model.build_vocab(train_corpus)
 model.train(train_corpus, total_examples=model.corpus_count, epochs=model.iter)
@@ -86,6 +91,7 @@ model.train(train_corpus, total_examples=model.corpus_count, epochs=model.iter)
 # Now, we'll save the document embedding vectors per doctag.
 
 # In[ ]:
+
 
 model.save_word2vec_format('doc_tensor.w2v', doctag_vec=True, word_vec=False)  
 
@@ -98,7 +104,8 @@ model.save_word2vec_format('doc_tensor.w2v', doctag_vec=True, word_vec=False)
 
 # In[ ]:
 
-get_ipython().magic('run ../../gensim/scripts/word2vec2tensor.py -i doc_tensor.w2v -o movie_plot')
+
+get_ipython().run_line_magic('run', '../../gensim/scripts/word2vec2tensor.py -i doc_tensor.w2v -o movie_plot')
 
 
 # 上記のスクリプトは、埋め込みベクトルを含む `movie_plot_tensor.tsv`とdoctagsを含む` movie_plot_metadata.tsv`の2つのファイルを生成します。 しかし、これらのdoctagsは一意のインデックス値であり、したがって、ドキュメントがどこに可視化されているかを解釈するのには有用ではありません。 したがって、 `movie_plot_metadata.tsv`を上書きして、2つの列を持つカスタムメタデータファイルを作成します。 最初の列はムービータイトル用で、2番目の列は対応するジャンル用です。
@@ -106,6 +113,7 @@ get_ipython().magic('run ../../gensim/scripts/word2vec2tensor.py -i doc_tensor.w
 # The script above generates two files, `movie_plot_tensor.tsv` which contain the embedding vectors and `movie_plot_metadata.tsv`  containing doctags. But, these doctags are simply the unique index values and hence are not really useful to interpret what the document was while visualizing. So, we will overwrite `movie_plot_metadata.tsv` to have a custom metadata file with two columns. The first column will be for the movie titles and the second for their corresponding genres.
 
 # In[ ]:
+
 
 with smart_open('movie_plot_metadata.tsv','w') as w:
     w.write('Titles\tGenres\n')
@@ -187,6 +195,7 @@ with smart_open('movie_plot_metadata.tsv','w') as w:
 
 # In[ ]:
 
+
 import pandas as pd
 import re
 from gensim.parsing.preprocessing import remove_stopwords, strip_punctuation
@@ -222,6 +231,7 @@ corpus = [dictionary.doc2bow(text) for text in texts]
 
 # In[ ]:
 
+
 # Set training parameters.
 num_topics = 10
 chunksize = 2000
@@ -245,6 +255,7 @@ model = ldamodel.LdaModel(corpus=corpus, id2word=dictionary, chunksize=chunksize
 
 # In[ ]:
 
+
 # Get document topics
 all_topics = model.get_document_topics(corpus, minimum_probability=0)
 all_topics[0]
@@ -263,6 +274,7 @@ all_topics[0]
 # Tensorboard takes two input files, one containing the embedding vectors and the other containing relevant metadata. As described above we will use the topic distribution of documents as their embedding vector. Metadata file will consist of Movie titles with their genres.
 
 # In[ ]:
+
 
 # create file for tensors
 with smart_open('doc_lda_tensor.tsv','w') as w:
@@ -308,6 +320,7 @@ with smart_open('doc_lda_metadata.tsv','w') as w:
 # Now, we will append the topics with highest probability (topic_id, topic_probability) to the document's title, in order to explore what topics do the cluster corners or edges dominantly belong to. For this, we just need to overwrite the metadata file as below:
 
 # In[ ]:
+
 
 tensors = []
 for doc_topics in all_topics:
@@ -364,6 +377,7 @@ with smart_open('doc_lda_metadata.tsv','w') as w:
 
 # In[ ]:
 
+
 model.show_topic(topicid=0, topn=15)
 
 
@@ -372,6 +386,7 @@ model.show_topic(topicid=0, topn=15)
 # You can even use pyLDAvis to deduce topics more efficiently. It provides a deeper inspection of the terms highly associated with each individual topic. For this, it uses a measure called **relevance** of a term to a topic that allows users to flexibly rank terms best suited for a meaningful topic interpretation. It's weight parameter called λ can be adjusted to display useful terms which could help in differentiating topics efficiently.
 
 # In[ ]:
+
 
 import pyLDAvis.gensim
 
