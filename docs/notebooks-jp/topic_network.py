@@ -10,7 +10,8 @@
 # In[ ]:
 
 
-get_ipython().system("pip install plotly>=2.0.16 --ignore-installed# 2.0.16 need for support 'hovertext' argument from create_dendrogram function")
+get_ipython().system(u'conda install plotly>=2.0.16')
+# 2.0.16 need for support 'hovertext' argument from create_dendrogram function
 
 
 # In[ ]:
@@ -182,26 +183,35 @@ for edge in G.edges():
     
     x_trace = list(np.linspace(x0, x1, 10))
     y_trace = list(np.linspace(y0, y1, 10))
+#     x_trace = np.linspace(x0, x1, 10)
+#     y_trace = np.linspace(y0, y1, 10)
+    
     text_annotation = [annotation] * 10
     x_trace.append(None)
     y_trace.append(None)
     text_annotation.append(None)
     
-    edge_trace['x'] += x_trace
-    edge_trace['y'] += y_trace
-    edge_trace['text'] += text_annotation
+    edge_trace['x'] += tuple(x_trace)
+    edge_trace['y'] += tuple(y_trace)
+
+#     edge_trace['x'] += x_trace
+#     edge_trace['y'] += y_trace
+#     edge_trace['text'] += text_annotation
 
 # add node trace with annotations
 for node in G.nodes():
     x, y = graph_pos[node]
-    node_trace['x'].append(x)
-    node_trace['y'].append(y)
+#     node_trace['x'].append(x)
+#     node_trace['y'].append(y)
+    node_trace['x'] += x
+    node_trace['y'] += y
     node_info = ''.join((str(node+1), ': ', str(list(topic_terms[node])[:n_ann_terms])))
-    node_trace['text'].append(node_info)
+#     node_trace['text'].append(node_info)
+    node_trace['text'] += tuple(node_info)
     
 # color node according to no. of connections
 for node, adjacencies in enumerate(G.adjacency()):
-    node_trace['marker']['color'].append(len(adjacencies))
+    node_trace['marker']['color'] += (len(adjacencies), )
 
 
 # In[ ]:
